@@ -165,3 +165,22 @@ if user.Age >= 18 {
 
 在處理大量資料時，反序列化是一個相對「昂貴」的操作（消耗記憶體與 CPU）。如果你發現你的程式只是把 Redis 的資料撈出來直接丟給前端，那麼跳過 Unmarshal 能讓你的 API 反應速度快上一大截！
 
+
+# 依照 Standard Go Project Layout 的專案結構重構程式碼, 參考：https://github.com/golang-standards/project-layout
+
+採用像 Standard Go Project Layout 這樣的標準結構，可以帶來許多好處：
+
+* 關注點分離 (Separation of Concerns)：每個套件都有明確的職責（例如，database 處理資料庫連線，repository 處理資料存取，domain 定義業務模型）。
+* 可維護性：當您需要修改使用者資料的存取邏輯時，您會知道要去 internal/user/repository.go 而不是在一個巨大的 main.go 中尋找。
+* 可測試性：將邏輯分離到不同的函數和結構中，可以更容易地為每個部分編寫單元測試。
+* 可擴展性：當需要新增功能（例如，產品 product）時，您可以輕鬆地建立新的套件（internal/product），而不會影響現有程式碼。
+
+## 重構後的目錄結構如下：
+
+go-redis-essentials/
+├── main.go              # package main
+├── database/
+│   └── redis.go         # package database（Redis 連線）
+└── user/
+    ├── user.go          # package user（User struct）
+    └── repository.go    # package user（CRUD 操作）
